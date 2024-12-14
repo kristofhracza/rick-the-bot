@@ -21,7 +21,7 @@ const isBot = (browser) => {
         "httpclient", "urllib", "mechanize", "wget", "go-http-client",
         "Java", "libwww-perl", "Googlebot", "Bingbot", "Yahoo! Slurp",
         "Baiduspider", "YandexBot", "DuckDuckBot", "MJ12bot",
-        "facebookexternalhit", "Facebot"
+        "facebookexternalhit", "Facebot", "vercel-screenshot"
     ];
     
     return bots.some(bot => browser.toLowerCase().includes(bot.toLowerCase()));
@@ -37,19 +37,19 @@ app.get("/", (req, res) => {
             fields: [
                 {
                     name: "Country",
-                    value: (req.headers["x-vercel-ip-country"]) ? req.headers["x-vercel-ip-country"] : "Unknown"
+                    value: (req.headers["x-vercel-ip-country"]) ? decodeURI(req.headers["x-vercel-ip-country"]) : "Unknown"
                 },
                 {
                     name: "City",
-                    value: (req.headers["x-vercel-ip-city"]) ? req.headers["x-vercel-ip-city"] : "Unknown"
+                    value: (req.headers["x-vercel-ip-city"]) ? decodeURI(req.headers["x-vercel-ip-city"]) : "Unknown"
                 },
                 {
                     name: "Region",
-                    value: (req.headers["x-vercel-ip-country-region"]) ? req.headers["x-vercel-ip-city"] : "Unknown"
+                    value: (req.headers["x-vercel-ip-country-region"]) ? decodeURI(req.headers["x-vercel-ip-city"]) : "Unknown"
                 },
                 {
                     name: "User Agent",
-                    value: (req.useragent.source) ? req.useragent.source : "Unknown"
+                    value: (req.useragent.source) ? decodeURI(req.useragent.source) : "Unknown"
                 }
             ]
         };
