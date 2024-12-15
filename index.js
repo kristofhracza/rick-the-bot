@@ -21,7 +21,7 @@ const isBot = (browser) => {
         "httpclient", "urllib", "mechanize", "wget", "go-http-client",
         "Java", "libwww-perl", "Googlebot", "Bingbot", "Yahoo! Slurp",
         "Baiduspider", "YandexBot", "DuckDuckBot", "MJ12bot",
-        "facebookexternalhit", "Facebot", "vercel-screenshot"
+        "facebookexternalhit", "Facebot", "vercel-screenshot", "Amazonbot",
     ];
     
     return bots.some(bot => browser.toLowerCase().includes(bot.toLowerCase()));
